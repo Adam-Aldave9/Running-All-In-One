@@ -1,41 +1,10 @@
 version: '3'
 services:
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:7.4.4
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_TICK_TIME: 2000
-  #   ports:
-  #     - "22181:2181"
-
-  # kafka:
-  #   image: confluentinc/cp-kafka:7.4.4
-  #   depends_on:
-  #     - zookeeper
-  #   ports:
-  #     - "29092:29092"
-  #   environment:
-  #     KAFKA_BROKER_ID: 1
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     KAFKA_ADVERTISED_LISTENERS: <Add advertised listeners here>
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT, <add advertised listeners mapping here>
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-
-  # init-kafka-container:
-  #   image: confluentinc/cp-kafka:7.4.4
-  #   depends_on:
-  #     - kafka
-  #   entrypoint: [ '/bin/sh', '-c' ]
-  #   command: |
-  #     'sh -c "(sleep 40) && (kafka-topics --delete --bootstrap-server kafka:29092 --topic users) && (echo \"Done\") && (kafka-topics --list --bootstrap-server kafka:29092) && (kafka-topics --bootstrap-server kafka:29092 --describe --topic users) && (kafka-topics --bootstrap-server kafka:29092 --alter --topic users --partitions 2) && (kafka-topics --bootstrap-server kafka:29092 --describe --topic users)"'
-  
-
   auth-db:
     image: postgres
     container_name: auth-db
+    depends_on: 
+      - init-kafka-container
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -50,6 +19,8 @@ services:
   user-profile-db:
     image: postgres
     container_name: user-profile-db
+    depends_on: 
+      - init-kafka-container
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -64,6 +35,8 @@ services:
   scheduling-db:
     image: postgres
     container_name: scheduling-db
+    depends_on: 
+      - init-kafka-container
     restart: always
     environment:
       POSTGRES_USER: admin
@@ -74,6 +47,63 @@ services:
       - C:\postgres_container_data\scheduling:/var/lib/postgresql/data
     ports:
       - "5434:5434"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://localhost:9092,AUTHENTICATION://kafka:19092,UPAM://kafka:39092,SAT://kafka:49092,SAPR://kafka:59092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_HOST:PLAINTEXT,AUTHENTICATION:PLAINTEXT,UPAM:PLAINTEXT,SAT:PLAINTEXT,SAPR:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: AUTHENTICATION
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  init-kafka-container:
+    image: confluentinc/cp-kafka:7.4.4
+    container_name: init-kafka-container
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      'sh -c "
+      (sleep 40) &&
+      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic UpdateUsernameUPAM)&&(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameUPAM --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameUPAM --create --partitions 1 --replication-factor 1)) &&
+      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic UpdateUsernameFailed)&&(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameFailed --create --partitions 3 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameFailed --create --partitions 3 --replication-factor 1)) &&
+      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic UpdateUsernameSAT)&&(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameSAT --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameSAT --create --partitions 1 --replication-factor 1)) &&
+      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic DeleteSessions)&&(kafka-topics --bootstrap-server kafka:19092 --topic DeleteSessions --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic DeleteSessions --create --partitions 1 --replication-factor 1)) &&
+      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic AddPartner)&&(kafka-topics --bootstrap-server kafka:19092 --topic AddPartner --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic AddPartner --create --partitions 1 --replication-factor 1)) &&
+      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic AddPartnerFailed)&&(kafka-topics --bootstrap-server kafka:19092 --topic AddPartnerFailed --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic AddPartnerFailed --create --partitions 1 --replication-factor 1)) &&
+      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic UpdateUsernameSAPR)&&(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameSAPR --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameSAPR --create --partitions 1 --replication-factor 1)) &&
+      (echo \"Topics created successfully\") &&
+      (echo) &&
+      (echo \"List Topics for kafka:19092\") &&
+      (echo) &&
+      (kafka-topics --bootstrap-server kafka:19092 --list) &&
+      (echo) &&
+      (echo \"Done1\") &&
+      (echo) &&
+      (echo \"List Topics for kafka:39092\") &&
+      (echo) &&
+      (kafka-topics --bootstrap-server kafka:39092 --list) &&
+      (echo) &&
+      (echo \"Done2\")
+      "'
 
   authorization-service:
     build: ./Backend/Authorization/auth
@@ -91,10 +121,10 @@ services:
     ports:
       - "8081:8081"
 
-  # partner-request-service:
-  #   build: ./Backend/PartnerRequests
-  #   ports:
-  #     - "8000:8000"
+  # # partner-request-service:
+  # #   build: ./Backend/PartnerRequests
+  # #   ports:
+  # #     - "8000:8000"
 
   scheduling-service:
     build: ./Backend/SchedulingAndTracking/Scheduling
@@ -104,9 +134,9 @@ services:
     ports:
       - "8082:8082"
 
-  frontend:
-    build: ./Frontend
-    ports:
-      - "3000:3000"
+  # frontend:
+  #   build: ./Frontend
+  #   ports:
+  #     - "3000:3000"
 
 

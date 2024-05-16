@@ -7,7 +7,7 @@ TOPIC: username update :: partitions: 3
 UPAM -> SAT
 TOPIC: delete_solos :: partitions: 1
 
-!!!!! - user exited from running group, remove from outstanding group sessions :: EVENT !!! Ignore for now too lazy
+!!!!! - user exited from running group, remove from outstanding group sessions :: EVENT !!! Ignore for now
 UPAM -> SAT
 TOPIC: remove_from_group_sessions :: partitions: 1
 
@@ -26,41 +26,41 @@ Kafka Topics per Service:
 
     - Authentication
         * Username change operation
-        - PUB: update_username_UPAM
-        - SUB: username_update_failed
+        - PUB: update_username_UPAM - 
+        - SUB: update_username_failed - 
 
     - UPAM
         * Username change operation
-        - PUB: update_username_SAT
-        - PUB: update_username_failed
-        - SUB: update_username_UPAM
-        - SUB: update_username_failed
+        - PUB: update_username_SAT - 
+        - PUB: update_username_failed -
+        - SUB: update_username_UPAM -
+        - SUB: update_username_failed -
 
         * Partner removed operation
-        - PUB: delete_sessions
-        - SUB: delete_sessions_failed
+        - PUB: delete_sessions -
+        - SUB: delete_sessions_failed -
 
         * Partner Request Approved operation
-        - SUB: add_partner
-        - PUB: add_partner_failed
+        - SUB: add_partner - 
+        - PUB: add_partner_failed -
 
     - SAT
         * Username change operation
-        - PUB: update_username_SAPR
-        - PUB: update_username_failed
-        - SUB: update_username_SAT
-        - SUB: update_username_failed
+        - PUB: update_username_SAPR -
+        - PUB: update_username_failed -
+        - SUB: update_username_SAT - 
+        - SUB: update_username_failed - 
 
         * Partner removed operation
-        - SUB: delete_sessions
-        - PUB: delete_sessions_failed 
+        - SUB: delete_sessions - 
+        - PUB: delete_sessions_failed -  
 
     - SAPR
         * Username change operation
-        - PUB: update_username_failed
-        - SUB: update_username_SAPR
+        - PUB: update_username_failed -
+        - SUB: update_username_SAPR - 
 
         * Partner Request Approved operation
-        - PUB: add_partner
-        - SUB: add_partner_failed
+        - PUB: add_partner - 
+        - SUB: add_partner_failed - 
 
