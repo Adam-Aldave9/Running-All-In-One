@@ -35,8 +35,8 @@ public class GroupMembersService {
     public GroupMembersModel updateGroupMember(Integer id, GroupMembersModel groupMember) {
         return groupMembersRepository.findById(id)
                 .map(member -> {
-                    member.setUser_id(groupMember.getUser_id());
-                    member.setGroup_id(groupMember.getGroup_id());
+                    member.setUserId(groupMember.getUserId());
+                    member.setGroupId(groupMember.getGroupId());
                     return groupMembersRepository.save(member);
                 })
                 .orElseGet(() -> {

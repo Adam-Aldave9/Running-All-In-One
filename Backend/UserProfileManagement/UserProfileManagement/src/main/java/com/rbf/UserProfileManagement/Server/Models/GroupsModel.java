@@ -13,11 +13,14 @@ import java.util.UUID;
 public class GroupsModel {
     @Id
     @GeneratedValue(generator = "UUID")
-    @Column(updatable = false, nullable = false)
+    @Column(name = "group_id", updatable = false, nullable = false)
     //@OneToMany
-    private UUID group_id;
+    private UUID groupId;
 
     //@ManyToOne
-    private UUID user_id;
-    private String group_name;
+    @Column(name = "user_id")
+    private UUID userId;
+
+    @Column(name = "group_name")
+    private String groupName;
 }

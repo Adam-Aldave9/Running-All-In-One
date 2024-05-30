@@ -13,15 +13,26 @@ import java.util.UUID;
 public class UserInformationModel {
     @Id
     @GeneratedValue(generator = "UUID")
-    @Column(updatable = false, nullable = false)
+    @Column(name = "user_id", updatable = false, nullable = false)
     //@OneToMany
-    private UUID user_id;
+    private UUID userId;
 
+    @Column(name = "username")
     private String username;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "age")
     private Integer age;
+
+    @Column(name = "location")
     private String location;
+
+    @Column(name = "experience")
     private String experience;
+
+    @Column(name = "availability")
     private String availability;
 
 }

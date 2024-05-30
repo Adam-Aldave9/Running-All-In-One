@@ -14,11 +14,14 @@ import java.util.UUID;
 public class PartnersModel {
     @Id
     @GeneratedValue(generator = "UUID")
-    @Column(updatable = false, nullable = false)
+    @Column(name = "partner_id", updatable = false, nullable = false)
     private UUID id;
 
     //@ManyToOne
+    @Column(name = "user_id")
     private UUID userID;
+
+    @Column(name = "partner_name")
     private String partnerName;
 
     public PartnersModel(UUID userID, String partnerName) {

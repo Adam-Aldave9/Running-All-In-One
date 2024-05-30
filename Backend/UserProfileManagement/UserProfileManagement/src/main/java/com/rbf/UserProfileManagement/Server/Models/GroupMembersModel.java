@@ -13,10 +13,14 @@ import java.util.UUID;
 public class GroupMembersModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "members_id", updatable = false, nullable = false)
     private Integer id;
 
     //@ManyToOne
-    private UUID user_id;
+    @Column(name = "user_id")
+    private UUID userId;
+
     //@ManyToOne
-    private UUID group_id;
+    @Column(name = "group_id")
+    private UUID groupId;
 }
