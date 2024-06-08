@@ -32,9 +32,9 @@ public class Publisher {
         this.kafkaMainTemplate.send(TOPIC_UPDATE_USERNAME_FAILED, 0, "UUF", oldUsername);
     }
 
-    public void deleteSessions(String message) { //need to look at this and database design
-        logger.info("Sending Message: " + message);
-        this.kafkaMainTemplate.send(TOPIC_DELETE_SESSIONS, 0, "DS", message);
+    public void deleteSessions(String partnerName) {
+        logger.info("Sending removed partner username to delete existing sessions: " + partnerName);
+        this.kafkaMainTemplate.send(TOPIC_DELETE_SESSIONS, 0, "DS", partnerName);
     }
 
     public void addPartnerFailed(String requestor, String requestee) {
