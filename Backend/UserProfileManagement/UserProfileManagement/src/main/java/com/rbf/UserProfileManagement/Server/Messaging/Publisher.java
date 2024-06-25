@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
+//MUST SEND ALL RELEVENT INFO USING MAPS
 @Service
 public class Publisher {
     private final Logger logger = LoggerFactory.getLogger(Publisher.class);
@@ -18,32 +19,41 @@ public class Publisher {
     private final String TOPIC_ADD_PARTNER_FAILED = "AddPartnerFailed";
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaMainTemplate;
-    @Autowired
-    private KafkaTemplate<String, HashMap<String, String>> kafkaAltTemplate;
+    private KafkaTemplate<String, HashMap<String, String>> kafkaTemplate;
 
-    public void updateUsernameSAT(String newUsername) {
+    public void updateUsernameSAT(String newUsername, String oldUsername) {
         logger.info("Sending message to update username in SAT: " + newUsername);
-        this.kafkaMainTemplate.send(TOPIC_UPDATE_USERNAME_SAT, 0, "UUSAT", newUsername); //send message to a topic
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("oldUsername", oldUsername);
+        data.put("newUsername", newUsername);
+        this.kafkaTemplate.send(TOPIC_UPDATE_USERNAME_SAT, 0, "UUSAT", data); //send message to a topic
     }
 
-    public void updateUsernameFailed(String oldUsername) {
-        logger.info("Sending old username for rollback: " + oldUsername); //use sending to partitions for syncronous rollback
-        this.kafkaMainTemplate.send(TOPIC_UPDATE_USERNAME_FAILED, 0, "UUF", oldUsername);
+    public void updateUsernameFailed(String newUsername, String oldUsername) {
+        logger.info("Sending old username for rollback: " + oldUsername); //use sending to partitions for asynchronous rollback
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("oldUsername", oldUsername);
+        data.put("newUsername", newUsername);
+        this.kafkaTemplate.send(TOPIC_UPDATE_USERNAME_FAILED, 0, "UUF", data);
     }
 
-    public void deleteSessions(String partnerName) {
-        logger.info("Sending removed partner username to delete existing sessions: " + partnerName);
-        this.kafkaMainTemplate.send(TOPIC_DELETE_SESSIONS, 0, "DS", partnerName);
+    // after removing partner, send message to SAT to delete all sessions for the partner removed and user in question
+    // put in PartnersService
+    public void deleteSessions(String firstPartner, String secondPartner) {
+        logger.info("Sending removed partner username to delete existing sessions: " + firstPartner + " " + secondPartner);
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("firstpartner", firstPartner);
+        data.put("secondpartner", secondPartner);
+        this.kafkaTemplate.send(TOPIC_DELETE_SESSIONS, 0, "DS", data);
     }
 
+    // could not add partner, send requestor and requestee for rollback in SAPR
+    // put in addPartner in Subscriber
     public void addPartnerFailed(String requestor, String requestee) {
         logger.info("Sending requestor and requestee for rollback: " + requestor + " " + requestee);
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("requestor", requestor);
-        map.put("requestee", requestee);
-        this.kafkaAltTemplate.send(TOPIC_ADD_PARTNER_FAILED, 0, "APF", map);
+        HashMap<String, String> data = new HashMap<String, String>();
+        data.put("requestor", requestor);
+        data.put("requestee", requestee);
+        this.kafkaTemplate.send(TOPIC_ADD_PARTNER_FAILED, 0, "APF", data);
     }
-
-
 }
