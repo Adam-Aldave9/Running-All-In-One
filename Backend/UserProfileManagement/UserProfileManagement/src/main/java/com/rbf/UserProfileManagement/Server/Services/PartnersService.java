@@ -1,6 +1,7 @@
 package com.rbf.UserProfileManagement.Server.Services;
 
 import com.rbf.UserProfileManagement.Server.Exceptions.EmployeeNotFoundException;
+import com.rbf.UserProfileManagement.Server.Messaging.Publisher;
 import com.rbf.UserProfileManagement.Server.Models.PartnersModel;
 import com.rbf.UserProfileManagement.Server.Repositories.PartnersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,8 @@ import java.util.UUID;
 public class PartnersService {
     @Autowired
     private PartnersRepository partnersRepository;
-
+    @Autowired
+    private Publisher publisher;
     // get all partners
     public List<PartnersModel> getAllPartners() {
         return (List<PartnersModel>) partnersRepository.findAll();
@@ -47,7 +49,14 @@ public class PartnersService {
     }
 
     // delete partner
-    public void deletePartner(UUID id) {
+    public void deletePartner(UUID id, String user) {
         partnersRepository.deleteById(id);
+        boolean exists = partnersRepository.existsById(id);
+        if (exists) {
+            // rollback
+            publisher.deleteSessions(user, partnersRepository.findById(id).get().getPartnerName());
+        }
     }
+
+
 }

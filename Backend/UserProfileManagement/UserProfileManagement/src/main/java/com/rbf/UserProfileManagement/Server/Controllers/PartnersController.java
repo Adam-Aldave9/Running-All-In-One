@@ -40,9 +40,10 @@ public class PartnersController {
     }
 
     //delete partner
-    @DeleteMapping(path="/{id}")
-    public ResponseEntity deletePartner(@PathVariable UUID id) {
-        partnersService.deletePartner(id);
+    // {user} is the current user logged in
+    @DeleteMapping(path="/{user}/{id}")
+    public ResponseEntity deletePartner(@PathVariable UUID id, @PathVariable String user) {
+        partnersService.deletePartner(id, user);
         return ResponseEntity.noContent().build();
     }
 }
