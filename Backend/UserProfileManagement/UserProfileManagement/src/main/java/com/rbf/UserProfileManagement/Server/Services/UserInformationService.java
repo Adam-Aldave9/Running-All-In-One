@@ -1,6 +1,6 @@
 package com.rbf.UserProfileManagement.Server.Services;
 
-import com.rbf.UserProfileManagement.Server.Exceptions.EmployeeNotFoundException;
+import com.rbf.UserProfileManagement.Server.Exceptions.UserInformationNotFoundException;
 import com.rbf.UserProfileManagement.Server.Models.UserInformationModel;
 import com.rbf.UserProfileManagement.Server.Repositories.UserInformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class UserInformationService {
     // get user by id
     public UserInformationModel getUserById(UUID id) {
         return userInformationRespository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(id));
+                .orElseThrow(() -> new UserInformationNotFoundException(id));
     }
 
     // create user

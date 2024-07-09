@@ -1,6 +1,6 @@
 package com.rbf.UserProfileManagement.Server.Services;
 
-import com.rbf.UserProfileManagement.Server.Exceptions.EmployeeNotFoundException;
+import com.rbf.UserProfileManagement.Server.Exceptions.MemberNotFoundException;
 import com.rbf.UserProfileManagement.Server.Models.GroupMembersModel;
 import com.rbf.UserProfileManagement.Server.Repositories.GroupMembersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class GroupMembersService {
     //get by id
     public GroupMembersModel getGroupMemberById(Integer id) {
         return groupMembersRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(id));
+                .orElseThrow(() -> new MemberNotFoundException(id));
     }
 
     //create group member
