@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class Subscriber {
@@ -61,13 +62,14 @@ public class Subscriber {
     @KafkaListener(id = "group_id", topicPartitions = {@TopicPartition(topic = "DeleteSessionsFailed", partitions = {"0"})})
     private void deleteSessionsFailed(Map<String, String> data) { //<user_id (owning partner), restored partner username>
         logger.info("Received Message in deleteSessionsFailed partition 0: ");
-        List<Object[]> feedback = partnersRepository.addPartner(data.get("user_id"), data.get("partner")); //rollback partner
+        UUID partner_id = UUID.randomUUID();
+        List<Object[]> feedback = partnersRepository.addPartner(partner_id, data.get("user_id"), data.get("partner")); //rollback partner
         if(feedback.size() == 1) { //if partner was rolled back successfully
             logger.info("Partner rolled back successfully in UPAM");
         }
         else{
             logger.info("Partner rollback failed in UPAM. Retrying");
-            feedback = partnersRepository.addPartner(data.get("user_id"), data.get("partner")); //rollback partner
+            feedback = partnersRepository.addPartner(partner_id, data.get("user_id"), data.get("partner")); //rollback partner
             logger.info("Retry Result is: " + feedback.size());
         }
     }
@@ -77,13 +79,14 @@ public class Subscriber {
     @KafkaListener(id = "group_id", topicPartitions = {@TopicPartition(topic = "AddPartner", partitions = {"0"})})
     private void addPartner(Map<String, String> data) {
         logger.info("Received Message in partition 0 addpartner: ");
-        List<Object[]> feedback = partnersRepository.addPartner(data.get("user_id"), data.get("partner")); //add partner
+        UUID partner_id = UUID.randomUUID();
+        List<Object[]> feedback = partnersRepository.addPartner(partner_id, data.get("user_id"), data.get("partner")); //add partner
         if(feedback.size() == 1) { //if partner was added successfully
             logger.info("Partner added successfully in UPAM");
         }
         else if(feedback.size() == 0) { //if partner was not added successfully
             logger.info("Partner add failed in UPAM. Retrying");
-            feedback = partnersRepository.addPartner(data.get("user_id"), data.get("partner")); //add partner
+            feedback = partnersRepository.addPartner(partner_id, data.get("user_id"), data.get("partner")); //add partner
             logger.info("Retry Result is: " + feedback.size());
             if(feedback.size() == 1) {
                 logger.info("Partner added successfully in UPAM");

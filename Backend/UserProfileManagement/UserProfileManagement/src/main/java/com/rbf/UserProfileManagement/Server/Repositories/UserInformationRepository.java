@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface UserInformationRepository extends CrudRepository<UserInformationModel, UUID>, JpaRepository<UserInformationModel, UUID>{
     @Modifying
     @Transactional
-    @Query(value = "UPDATE UserInformation SET username = :newUsername WHERE username = :oldUsername", nativeQuery = true) //need where statement
+    @Query(value = "UPDATE \"user information\" SET username = :newUsername WHERE username = :oldUsername", nativeQuery = true) //need where statement
     //@Param for proper
     int updateUsername(@Param("newUsername") String newUsername, @Param("oldUsername") String oldUsername);
 

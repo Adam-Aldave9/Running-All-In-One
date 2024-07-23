@@ -1,6 +1,6 @@
 package com.rbf.UserProfileManagement.Server.Services;
 
-import com.rbf.UserProfileManagement.Server.Exceptions.EmployeeNotFoundException;
+import com.rbf.UserProfileManagement.Server.Exceptions.PartnerNotFoundException;
 import com.rbf.UserProfileManagement.Server.Messaging.Publisher;
 import com.rbf.UserProfileManagement.Server.Models.PartnersModel;
 import com.rbf.UserProfileManagement.Server.Repositories.PartnersRepository;
@@ -26,7 +26,7 @@ public class PartnersService {
     // get partner by id
     public PartnersModel getPartnerById(UUID id) {
         return partnersRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(id));
+                .orElseThrow(() -> new PartnerNotFoundException(id));
     }
 
     // create partner
