@@ -49,12 +49,13 @@ public class PartnersService {
     }
 
     // delete partner
+    // id is owning partner
     public void deletePartner(UUID id, String user) {
         partnersRepository.deleteById(id);
         boolean exists = partnersRepository.existsById(id);
         if (exists) {
             // rollback
-            publisher.deleteSessions(user, partnersRepository.findById(id).get().getPartnerName());
+            publisher.deleteSessions(user, partnersRepository.findById(id).get().getPartnerName(), id.toString());
         }
     }
 
