@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface PartnersRepository extends CrudRepository<PartnersModel, UUID>, JpaRepository<PartnersModel, UUID> {
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO partners (user_id, username) VALUES (:userid, :username)", nativeQuery = true)
-    List<Object[]> addPartner(@Param("userid") String userid, @Param("username") String username); //object[] bad practice fix later
+    @Query(value = "INSERT INTO partners (partner_id, user_id, username) VALUES (:partner_id, :userid, :username)", nativeQuery = true)
+    List<Object[]> addPartner(@Param("partner_id") UUID partner_id, @Param("userid") String userid, @Param("username") String username); //object[] bad practice fix later
 
 }

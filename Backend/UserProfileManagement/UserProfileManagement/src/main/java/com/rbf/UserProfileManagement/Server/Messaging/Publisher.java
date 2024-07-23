@@ -39,11 +39,12 @@ public class Publisher {
 
     // after removing partner, send message to SAT to delete all sessions for the partner removed and user in question
     // put in PartnersService
-    public void deleteSessions(String firstPartner, String secondPartner) {
+    public void deleteSessions(String firstPartner, String secondPartner, String user_id) {
         logger.info("Sending removed partner username to delete existing sessions: " + firstPartner + " " + secondPartner);
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("firstpartner", firstPartner);
         data.put("secondpartner", secondPartner);
+        data.put("user_id", user_id); //user_id is the user who removed the partner
         this.kafkaTemplate.send(TOPIC_DELETE_SESSIONS, 0, "DS", data);
     }
 
