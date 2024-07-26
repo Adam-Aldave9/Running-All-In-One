@@ -1,5 +1,6 @@
 package com.rbf.UserProfileManagement.Server.Messaging;
 
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 
 //MUST SEND ALL RELEVENT INFO USING MAPS
 @Service
+@Transactional
 public class Publisher {
     private final Logger logger = LoggerFactory.getLogger(Publisher.class);
 
@@ -24,16 +26,16 @@ public class Publisher {
     public void updateUsernameSAT(String newUsername, String oldUsername) {
         logger.info("Sending message to update username in SAT: " + newUsername);
         HashMap<String, String> data = new HashMap<String, String>();
-        data.put("oldUsername", oldUsername);
-        data.put("newUsername", newUsername);
+        data.put("old", oldUsername);
+        data.put("new", newUsername);
         this.kafkaTemplate.send(TOPIC_UPDATE_USERNAME_SAT, 0, "UUSAT", data); //send message to a topic
     }
 
     public void updateUsernameFailed(String newUsername, String oldUsername) {
         logger.info("Sending old username for rollback: " + oldUsername); //use sending to partitions for asynchronous rollback
         HashMap<String, String> data = new HashMap<String, String>();
-        data.put("oldUsername", oldUsername);
-        data.put("newUsername", newUsername);
+        data.put("old", oldUsername);
+        data.put("new", newUsername);
         this.kafkaTemplate.send(TOPIC_UPDATE_USERNAME_FAILED, 0, "UUF", data);
     }
 
