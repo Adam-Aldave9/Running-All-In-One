@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,11 +52,11 @@ public class PartnersService {
     // delete partner
     // id is owning partner
     public void deletePartner(UUID id, String user) {
-        partnersRepository.deleteById(id);
-        boolean exists = partnersRepository.existsById(id);
+        partnersRepository.deleteSpecificPartner(id, user);
+        boolean exists = !partnersRepository.getSpecificPartner(id, user).isEmpty();
         if (exists) {
             // rollback
-            publisher.deleteSessions(user, partnersRepository.findById(id).get().getPartnerName(), id.toString());
+            publisher.deleteSessions(user, partnersRepository.getSpecificPartner(id, user).get(0).getPartnerName(), id.toString());
         }
     }
 

@@ -15,6 +15,20 @@ public interface PartnersRepository extends CrudRepository<PartnersModel, UUID>,
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO partners (partner_id, user_id, username) VALUES (:partner_id, :userid, :username)", nativeQuery = true)
-    List<Object[]> addPartner(@Param("partner_id") UUID partner_id, @Param("userid") String userid, @Param("username") String username); //object[] bad practice fix later
+    int addPartner(@Param("partner_id") UUID partner_id, @Param("userid") String userid, @Param("username") String username);
 
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM partners WHERE user_id = :owningPartner AND second_partner = :secondPartner", nativeQuery = true)
+    int deleteSpecificPartner(@Param("owningPartner") UUID owningPartner, @Param("secondPartner") String secondPartner);
+
+    @Modifying
+    @Transactional
+    @Query(value = "SELECT * FROM partners WHERE user_id = :owningPartner", nativeQuery = true)
+    List<PartnersModel> getAllByOwningID(@Param("owningPartner") UUID owningPartner);
+
+    @Modifying
+    @Transactional
+    @Query(value = "SELECT * FROM partners WHERE user_id = :owningPartner AND second_partner = :secondPartner", nativeQuery = true)
+    List<PartnersModel> getSpecificPartner(@Param("owningPartner") UUID owningPartner, @Param("secondPartner") String secondPartner);
 }
