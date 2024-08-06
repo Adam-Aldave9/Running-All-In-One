@@ -11,12 +11,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.UUID;
 
 public interface GroupParticipantsRepository extends CrudRepository<GroupParticipantsModel, UUID>, JpaRepository<GroupParticipantsModel, UUID>{
-    String query = "UPDATE \"group participants\"\n" +
-            "SET username = :newUsername\n" +
-            "WHERE username = :oldUsername\n" +
-            "AND EXISTS (\n" +
-            "    SELECT 1 FROM \"group participants\" WHERE username = :oldUsername\n" +
-            ")";
+    String query = "UPDATE \"group participants\" SET username = :newUsername WHERE username = :oldUsername " +
+            "AND EXISTS (SELECT 1 FROM \"group participants\" WHERE username = :oldUsername)";
     @Modifying
     @Transactional
     @Query(value = query, nativeQuery = true)

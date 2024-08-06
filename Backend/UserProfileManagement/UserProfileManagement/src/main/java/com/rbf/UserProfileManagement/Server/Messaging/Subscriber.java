@@ -2,7 +2,6 @@ package com.rbf.UserProfileManagement.Server.Messaging;
 
 import com.rbf.UserProfileManagement.Server.Repositories.PartnersRepository;
 import com.rbf.UserProfileManagement.Server.Repositories.UserInformationRepository;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +9,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Service
-@Transactional
 public class Subscriber {
     private final Logger logger = LoggerFactory.getLogger(Publisher.class);
 
@@ -26,75 +23,73 @@ public class Subscriber {
     private Publisher publisher;
 
     // auth service must send a map with old and new usernames to this listener
-    @KafkaListener(id = "group_id", topicPartitions = {@TopicPartition(topic = "UpdateUsernameUPAM", partitions = {"0"})})
-    private void updateUsername(Map<String, String> usernames) {
-        logger.info("Update Username Received Message in partition 0: " + usernames.get("new"));
-        int usernameUpdated = userInformationRepository.updateUsername(usernames.get("new"), usernames.get("old")); //query to update username
+    @KafkaListener(id = "UUC", topicPartitions = {@TopicPartition(topic = "UpdateUsernameUPAM", partitions = {"0"})})
+    private void updateUsername(Payload usernames) {
+        logger.info("Update Username Received Message in partition 0: " + usernames.getNewUsername());
+        int usernameUpdated = userInformationRepository.updateUsername(usernames.getNewUsername(), usernames.getOldUsername()); //query to update username
         if(usernameUpdated == 1) { //if username was updated successfully
             logger.info("Username updated successfully in UPAM");
-            //kafkaMapTemplate.send("UpdateUsernameSAT", 0, "UU", usernames); //continue saga to SAT
-            publisher.updateUsernameSAT(usernames.get("new"), usernames.get("old"));
+            publisher.updateUsernameSAT(usernames.getNewUsername(), usernames.getOldUsername());
         }
         else if(usernameUpdated == 0) { //if username was not updated successfully
             logger.info("Username update failed in UPAM");
             // partition 1 belongs to the authentication listener for rollback
             // send back old username for rollback in auth service
-            //kafkaMapTemplate.send("UpdateUsernameFailed", 1, "UUF", usernames);
-            publisher.updateUsernameFailed(usernames.get("new"), usernames.get("old"));
+            publisher.updateUsernameFailed(usernames.getNewUsername(), usernames.getOldUsername());
         }
     }
 
     // rollback this services' username because of update failure in SAT Service
-    @KafkaListener(id = "group_id", topicPartitions = {@TopicPartition(topic = "UpdateUsernameFailed", partitions = {"0"})})
-    private void updateUsernameFailed(Map<String, String> usernames) {
-        logger.info("Received Username rollback message in partition 0: " + usernames.get("new"));
-        int usernameRolledBack = userInformationRepository.updateUsername(usernames.get("old"), usernames.get("new")); //rollback username
+    @KafkaListener(id = "UUFC", topicPartitions = {@TopicPartition(topic = "UpdateUsernameFailed", partitions = {"0"})})
+    private void updateUsernameFailed(Payload usernames) {
+        logger.info("Received Username rollback message in partition 0: " + usernames.getNewUsername());
+        int usernameRolledBack = userInformationRepository.updateUsername(usernames.getOldUsername(), usernames.getNewUsername()); //rollback username
         if(usernameRolledBack == 1) { //if username was rolled back successfully
             logger.info("Username rolled back successfully in UPAM");
         }
         else{
             logger.info("Username rollback failed in UPAM. Retrying");
-            usernameRolledBack = userInformationRepository.updateUsername(usernames.get("old"), usernames.get("new")); //rollback username
+            usernameRolledBack = userInformationRepository.updateUsername(usernames.getOldUsername(), usernames.getNewUsername()); //rollback username
             logger.info("Retry Result is: " + usernameRolledBack);
         }
     }
 
     // "remove sessions" failed in SAT Service. Need to readd partner for rollback
-    @KafkaListener(id = "group_id", topicPartitions = {@TopicPartition(topic = "DeleteSessionsFailed", partitions = {"0"})})
-    private void deleteSessionsFailed(Map<String, String> data) { //<user_id (owning partner), restored partner username>
+    @KafkaListener(id = "DSFC", topicPartitions = {@TopicPartition(topic = "DeleteSessionsFailed", partitions = {"0"})})
+    private void deleteSessionsFailed(Payload payload) { //<user_id (owning partner), restored partner username>
         logger.info("Received Message in deleteSessionsFailed partition 0: ");
         UUID partner_id = UUID.randomUUID();
-        int feedback = partnersRepository.addPartner(partner_id, data.get("user_id"), data.get("secondpartner")); //rollback partner
+        int feedback = partnersRepository.addPartner(partner_id, payload.getUserId(), payload.getSecondPartner()); //rollback partner
         if(feedback == 1) { //if partner was rolled back successfully
             logger.info("Partner rolled back successfully in UPAM");
         }
         else{
             logger.info("Partner rollback failed in UPAM. Retrying");
-            feedback = partnersRepository.addPartner(partner_id, data.get("user_id"), data.get("secondpartner")); //rollback partner
+            feedback = partnersRepository.addPartner(partner_id, payload.getUserId(), payload.getSecondPartner()); //rollback partner
             logger.info("Retry Result is: " + feedback);
         }
     }
 
     // add a partner to a user from data given from SAPR Service
     // SAPR should give map with keys user_id, partner, requestor, requestee
-    @KafkaListener(id = "group_id", topicPartitions = {@TopicPartition(topic = "AddPartner", partitions = {"0"})})
-    private void addPartner(Map<String, String> data) {
+    @KafkaListener(id = "APC", topicPartitions = {@TopicPartition(topic = "AddPartner", partitions = {"0"})})
+    private void addPartner(Payload payload) {
         logger.info("Received Message in partition 0 addpartner: ");
         UUID partner_id = UUID.randomUUID();
-        int feedback = partnersRepository.addPartner(partner_id, data.get("user_id"), data.get("secondpartner")); //add partner
+        int feedback = partnersRepository.addPartner(partner_id, payload.getUserId(), payload.getSecondPartner()); //add partner
         if(feedback == 1) { //if partner was added successfully
             logger.info("Partner added successfully in UPAM");
         }
         else if(feedback == 0) { //if partner was not added successfully
             logger.info("Partner add failed in UPAM. Retrying");
-            feedback = partnersRepository.addPartner(partner_id, data.get("user_id"), data.get("secondpartner")); //add partner
+            feedback = partnersRepository.addPartner(partner_id, payload.getUserId(), payload.getSecondPartner()); //add partner
             logger.info("Retry Result is: " + feedback);
             if(feedback == 1) {
                 logger.info("Partner added successfully in UPAM");
             }
             else {
-                logger.info("Partner add failed in UPAM. Sending requestor and requestee for rollback");
-                publisher.addPartnerFailed(data.get("requestor"), data.get("requestee"));
+                logger.info("Partner add failed in UPAM. Sending requester and requested for rollback");
+                publisher.addPartnerFailed(payload.getRequester(), payload.getRequested());
             }
         }
     }
