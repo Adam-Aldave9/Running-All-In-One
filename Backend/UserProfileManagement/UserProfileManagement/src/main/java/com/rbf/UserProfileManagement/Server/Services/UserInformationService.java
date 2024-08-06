@@ -54,4 +54,5 @@ public class UserInformationService {
     public void deleteUser(UUID id) {
         userInformationRespository.deleteById(id);
     }
+
 }
