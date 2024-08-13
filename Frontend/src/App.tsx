@@ -27,7 +27,7 @@ function App() {
           <Route path="/userprofile/:username/:id" element={<UserProfile></UserProfile>} />
           <Route path="/edituserprofile/:username/:id" element={<EditUserProfile></EditUserProfile>} />
           <Route path="/viewassociated/:username/:id" element={<ViewAssociated></ViewAssociated>} />
-          <Route path="/creategroup/:username/:id" element={<CreateGroup></CreateGroup>} />{/**may wipe put groups */}
+          <Route path="/creategroup/:username/:id" element={<CreateGroup></CreateGroup>} />{/**may wipe out groups */}
           <Route path="/editgroup/:username/:id" element={<EditGroup></EditGroup>} />
           <Route path="/search/:username/:id" element={<Search></Search>} />
         </Routes>
