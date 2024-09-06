@@ -20,9 +20,6 @@ public class HistoryModel {
     @Column(name = "credential_id")
     private UUID credentialId;
 
-    @Column(name = "date_created")
-    private LocalDate dateCreated;
-
     @Column(name = "last_login")
     private LocalDate lastLogin;
 }

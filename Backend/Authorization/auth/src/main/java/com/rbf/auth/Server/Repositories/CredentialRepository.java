@@ -15,4 +15,8 @@ public interface CredentialRepository extends CrudRepository<CredentialsModel, U
     @Transactional
     @Query(value = "UPDATE credentials SET username = :newUsername WHERE username = :oldUsername", nativeQuery = true)
     int updateUsername(@Param("newUsername") String newUsername, @Param("oldUsername") String oldUsername);
+
+    @Transactional
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM credentials WHERE username = :username AND password = :password)", nativeQuery = true)
+    boolean existsByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
 }

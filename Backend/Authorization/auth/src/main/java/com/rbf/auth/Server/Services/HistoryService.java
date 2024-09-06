@@ -35,7 +35,6 @@ public class HistoryService {
                 .map(curr -> {
                     curr.setHistoryId(history.getHistoryId());
                     curr.setCredentialId(history.getCredentialId());
-                    curr.setDateCreated(history.getDateCreated());
                     curr.setLastLogin(history.getLastLogin());
                     return historyRepository.save(curr);
                 })
