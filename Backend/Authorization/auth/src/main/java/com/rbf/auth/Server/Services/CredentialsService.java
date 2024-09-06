@@ -5,6 +5,7 @@ import com.rbf.auth.Server.Messaging.Publisher;
 import com.rbf.auth.Server.Models.CredentialsModel;
 import com.rbf.auth.Server.Repositories.CredentialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class CredentialsService {
     }
 
     //create credential
-    public CredentialsModel addCredential(CredentialsModel newCredential) {
+    public CredentialsModel addCredential(CredentialsModel newCredential) throws DataIntegrityViolationException {
         return credentialsRepository.save(newCredential);
     }
     //update only username
@@ -48,12 +49,17 @@ public class CredentialsService {
                     curr.setCredentialId(credential.getCredentialId());
                     curr.setUsername(credential.getUsername());
                     curr.setPassword(credential.getPassword());
+                    curr.setDateCreated(credential.getDateCreated());
                     return credentialsRepository.save(curr);
                 })
                 .orElseGet(() -> {
                     credential.setCredentialId(id);
                     return credentialsRepository.save(credential);
                 });
+    }
+
+    public boolean verifyCredentials(String username, String password) {
+        return credentialsRepository.existsByUsernameAndPassword(username, password);
     }
 
     //delete credential

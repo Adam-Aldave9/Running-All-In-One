@@ -16,9 +16,12 @@ public class CredentialsModel {
     @Column(name = "credential_id", updatable = false, nullable = false)
     private UUID credentialId;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "date_created")
+    private String dateCreated;
 }
