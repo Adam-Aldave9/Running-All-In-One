@@ -14,6 +14,6 @@ import java.util.UUID;
 public interface HistoryRepository extends CrudRepository<HistoryModel, UUID>, JpaRepository<HistoryModel, UUID> {
     @Modifying
     @Transactional
-    @Query(value = "UPDATE history SET last_login = :lastLogin WHERE user_id = :user_Id", nativeQuery = true)
+    @Query(value = "UPDATE history SET last_login = :lastLogin WHERE user_id = :user_id", nativeQuery = true)
     int updateLastLogin(@Param("user_id") UUID userId, @Param("lastLogin") LocalDate lastLogin);
 }
