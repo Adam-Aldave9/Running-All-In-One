@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-function SignUp() {
+
+function SignUp(): JSX.Element {
 	const [newUser, setNewUser] = useState({
         username: "",
         password: "",
@@ -21,21 +22,21 @@ function SignUp() {
 
 	const [exists, setExists] = useState("")
 
-	function onChangeUsername(e: React.ChangeEvent<HTMLInputElement>){
+	function onChangeUsername(e: React.ChangeEvent<HTMLInputElement>): void{
         setNewUser({
             ...newUser,
             username: e.target.value
         })
     }
 
-    function onChangePassword(e: React.ChangeEvent<HTMLInputElement>){
+    function onChangePassword(e: React.ChangeEvent<HTMLInputElement>): void{
         setNewUser({
             ...newUser,
             password: e.target.value
         })
     }
 
-	async function onSignUp(e: React.MouseEvent<HTMLButtonElement>){
+	async function onSignUp(e: React.MouseEvent<HTMLButtonElement>): Promise<void>{
 		try{
 			let responseCred = await axios.post("http://localhost:80/credentials/add", newUser)
 			if(responseCred.status == 200){

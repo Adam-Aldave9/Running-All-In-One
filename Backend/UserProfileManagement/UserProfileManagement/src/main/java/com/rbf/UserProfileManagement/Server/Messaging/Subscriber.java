@@ -1,7 +1,10 @@
 package com.rbf.UserProfileManagement.Server.Messaging;
 
+import com.rbf.UserProfileManagement.Server.Models.UserInformationModel;
 import com.rbf.UserProfileManagement.Server.Repositories.PartnersRepository;
 import com.rbf.UserProfileManagement.Server.Repositories.UserInformationRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,4 +97,32 @@ public class Subscriber {
         }
     }
 
+    @KafkaListener(id = "CPR", topicPartitions = {@TopicPartition(topic = "CreateUserProfile", partitions = {"0"})})
+    private void createProfile(MessageWrapper message) {
+        try {
+            logger.info("Received Create Profile message in partition 0: " + message.getUsername());
+            // create profile
+            UserInformationModel model = new UserInformationModel();
+            model.setUsername(message.getUsername());
+            model.setName("Add your name");
+            model.setAge(-1);
+            model.setLocation("Add your location");
+            model.setExperience("Add your experience");
+            model.setAvailability("Add your availability");
+            UserInformationModel res = userInformationRepository.save(model);
+            if(res == null) {
+                logger.info("Create Profile failed in UPAM. Sending message to rollback");
+                publisher.createProfileFailed(message);
+            }
+        } catch (Exception e) {
+            logger.info("Create Profile failed in UPAM. Sending message to rollback");
+            publisher.createProfileFailed(message);
+        }
+    }
+}
+
+@Getter
+@Setter
+class MessageWrapper{
+    private String username;
 }

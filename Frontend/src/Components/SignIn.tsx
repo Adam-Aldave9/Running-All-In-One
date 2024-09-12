@@ -1,28 +1,29 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-function SignIn() {
+
+function SignIn(): JSX.Element {
 	const [user, setUser] = useState({
 		username: "",
 		password: "",
 	});
 	const [success, setSuccess] = useState("");
 
-	function onChangeUsername(e: React.ChangeEvent<HTMLInputElement>) {
+	function onChangeUsername(e: React.ChangeEvent<HTMLInputElement>): void {
 		setUser({
 			...user,
 			username: e.target.value
 		});
 	}
 
-	function onChangePassword(e: React.ChangeEvent<HTMLInputElement>) {
+	function onChangePassword(e: React.ChangeEvent<HTMLInputElement>): void {
 		setUser({
 			...user,
 			password: e.target.value
 		});
 	}
 
-	async function onSignIn(e: React.MouseEvent<HTMLButtonElement>) {
+	async function onSignIn(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
 		const params = {
 			username: user.username,
 			password: user.password

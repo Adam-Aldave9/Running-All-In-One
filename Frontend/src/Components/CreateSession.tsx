@@ -1,27 +1,28 @@
 import { useParams } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
-function CreateSession() {
-    interface participantData {
+function CreateSession(): JSX.Element {
+    interface ParticipantData {
         partnerOne: string | undefined
         partnerTwo: string,
         sessionId: string
     }
-    interface data {
+    interface Data {
         date: string,
         time: string,
         location: string
     }
 
     const params = useParams<{username: string, userid: string}>();
-    const [data, setData] = useState<data>({
+    const [data, setData] = useState<Data>({
         date: "",
         time: "",
         location: ""
     });
 
-    const [participantData, setParticipantData] = useState<participantData>({
+    const [participantData, setParticipantData] = useState<ParticipantData>({
         partnerOne: "",
         partnerTwo: "",
         sessionId: ""
@@ -34,37 +35,48 @@ function CreateSession() {
         })
     }, [])
 
-    function onChangeDate(e:  React.ChangeEvent<HTMLInputElement>) {
+    function onChangeDate(e:  React.ChangeEvent<HTMLInputElement>): void {
         setData({
             ...data,
             date: e.target.value
         });
     }
 
-    function onChangeTime(e:  React.ChangeEvent<HTMLInputElement>) {
+    function onChangeTime(e:  React.ChangeEvent<HTMLInputElement>): void {
         setData({
             ...data,
             time: e.target.value
         });
     }
 
-    function onChangeLocation(e:  React.ChangeEvent<HTMLInputElement>) {
+    function onChangeLocation(e:  React.ChangeEvent<HTMLInputElement>): void {
         setData({
             ...data,
             location: e.target.value
         });
     }
 
-    function onChangeRunningPartner(e:  React.ChangeEvent<HTMLInputElement>) {
+    function onChangeRunningPartner(e:  React.ChangeEvent<HTMLInputElement>): void {
         setParticipantData({
             ...participantData,
             partnerOne: e.target.value
         });
     }
 
-    async function onCreateSession(e:  React.MouseEvent<HTMLButtonElement>) {
+    async function onCreateSession(e:  React.MouseEvent<HTMLButtonElement>): Promise<void> {
         //send request to sessions and session participants table
         //query sessionId or are we able to generate one and send with payload?
+        try{
+            const responseSessionsAdd = await axios.post("http://localhost:80/sessions/add", data)
+            setParticipantData({
+                ...participantData,
+                sessionId: responseSessionsAdd.data.sessionId
+            })
+            await axios.post("http://localhost:80/sessionparticipants/add", participantData)
+            window.location.assign(`/viewsessions/${params.username}`)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (

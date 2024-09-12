@@ -19,4 +19,13 @@ public interface CredentialRepository extends CrudRepository<CredentialsModel, U
     @Transactional
     @Query(value = "SELECT EXISTS(SELECT 1 FROM credentials WHERE username = :username AND password = :password)", nativeQuery = true)
     boolean existsByUsernameAndPassword(@Param("username") String username, @Param("password") String password);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM credentials WHERE username = :username", nativeQuery = true)
+    int deleteByUsername(@Param("username") String username);
+
+    @Transactional
+    @Query(value = "SELECT credential_id FROM credentials WHERE username = :username", nativeQuery = true)
+    UUID findIdByUsername(@Param("username") String username);
 }

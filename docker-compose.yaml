@@ -91,6 +91,8 @@ services:
       (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic AddPartner --partitions 1 --replication-factor 1) &&
       (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic AddPartnerFailed --partitions 1 --replication-factor 1) &&
       (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic UpdateUsernameSAPR --partitions 1 --replication-factor 1) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic CreateUserProfile --partitions 1 --replication-factor 1) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic CreateUserProfileFailed --partitions 1 --replication-factor 1) &&
       (echo \"Topics created successfully\") &&
       (echo) &&
       (echo \"List Topics for kafka:19092\") &&
@@ -122,11 +124,11 @@ services:
   #   ports:
   #     - "8081:8081"
 
-  # # partner-request-service:
-  # #   build: ./Backend/PartnerRequests
-  # #   container_name: partner-request-service
-  # #   ports:
-  # #     - "8000:8000"
+  # partner-request-service:
+  #   build: ./Backend/PartnerRequests
+  #   container_name: partner-request-service
+  #   ports:
+  #     - "8000:8000"
 
   # scheduling-service:
   #   build: ./Backend/SchedulingAndTracking/Scheduling

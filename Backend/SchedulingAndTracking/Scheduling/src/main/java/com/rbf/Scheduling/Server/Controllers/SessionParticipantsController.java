@@ -1,5 +1,6 @@
 package com.rbf.Scheduling.Server.Controllers;
 
+import com.rbf.Scheduling.Server.Models.SessionJoinModel;
 import com.rbf.Scheduling.Server.Models.SessionParticipantsModel;
 import com.rbf.Scheduling.Server.Services.SessionsParticipantsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +27,13 @@ public class SessionParticipantsController {
     @GetMapping(path="/{id}")
     public ResponseEntity<SessionParticipantsModel> getSessionParticipantById(@PathVariable UUID id) {
         return ResponseEntity.ok(sessionParticipantsService.getSessionParticipantById(id));
+    }
+
+    // get session join data
+    @GetMapping(path="/sessionsjoin/{username}")
+    //public ResponseEntity<List<SessionJoinModel>> getSessionsAndParticipants(@PathVariable String username) {
+    public ResponseEntity<List<Map<String, SessionJoinModel>>> getSessionsAndParticipants(@PathVariable String username) {
+        return ResponseEntity.ok(sessionParticipantsService.getSessionsAndParticipants(username));
     }
 
     //create session participant

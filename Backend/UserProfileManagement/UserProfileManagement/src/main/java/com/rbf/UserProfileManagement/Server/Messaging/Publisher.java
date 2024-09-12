@@ -1,6 +1,8 @@
 package com.rbf.UserProfileManagement.Server.Messaging;
 
 import jakarta.transaction.Transactional;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,12 @@ public class Publisher {
     private final String TOPIC_UPDATE_USERNAME_FAILED = "UpdateUsernameFailed";
     private final String TOPIC_DELETE_SESSIONS = "DeleteSessions";
     private final String TOPIC_ADD_PARTNER_FAILED = "AddPartnerFailed";
+    private final String TOPIC_CREATE_USER_PROFILE_FAILED = "CreateUserProfileFailed";
 
     @Autowired
     private KafkaTemplate<String, Payload> kafkaTemplate;
+    @Autowired
+    private KafkaTemplate<String, MessageWrapper> kafkaTemplateOther;
 
     public void updateUsernameSAT(String newUsername, String oldUsername) {
         logger.info("Sending message to update username in SAT: " + newUsername);
@@ -56,4 +61,10 @@ public class Publisher {
         payload.setRequested(requested);
         this.kafkaTemplate.send(TOPIC_ADD_PARTNER_FAILED, 0, "APF", payload);
     }
+
+    public void createProfileFailed(MessageWrapper message) {
+        logger.info("Sending username for rollback: " + message.getUsername());
+        this.kafkaTemplateOther.send(TOPIC_CREATE_USER_PROFILE_FAILED, 0, "CPF", message);
+    }
+
 }
