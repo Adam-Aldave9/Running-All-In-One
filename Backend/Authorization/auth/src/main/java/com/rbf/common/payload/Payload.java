@@ -1,4 +1,4 @@
-package com.rbf.Scheduling.Server.Messaging;
+package com.rbf.common.payload;
 
 import lombok.Getter;
 import lombok.Setter;

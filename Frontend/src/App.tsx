@@ -25,7 +25,7 @@ function App() {
           <Route path="/signup" element={<SignUp></SignUp>} />
           <Route path="/viewsessions/:username" element={<ViewSessions></ViewSessions>}/>
           <Route path="/createsession/:username/:userid" element={<CreateSession></CreateSession>} />
-          <Route path="/editsession/:username/:userid/:sessionid" element={<EditSession></EditSession>} />
+          <Route path="/editsession/:username/:sessionid" element={<EditSession></EditSession>} />
           <Route path="/userprofile/:username/:userid" element={<UserProfile></UserProfile>} />
           <Route path="/edituserprofile/:username/:userid" element={<EditUserProfile></EditUserProfile>} />
           <Route path="/viewassociated/:username/:userid" element={<ViewAssociated></ViewAssociated>} />

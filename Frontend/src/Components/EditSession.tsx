@@ -1,44 +1,68 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
-function EditSession() {
-    interface data {
+function EditSession(): JSX.Element {
+    interface Data {
         date: string,
         time: string,
         location: string
     }
 
     const params = useParams<{username: string, userid: string, sessionId: string}>();
-    const [data, setData] = useState<data>({
+    const [data, setData] = useState<Data>({
         date: "",
         time: "",
         location: ""
     });
 
-    function onChangeDate(e:  React.ChangeEvent<HTMLInputElement>) {
+    useEffect(() => {
+        loadData();
+    }, [])
+
+    async function loadData(): Promise<void> {
+        try{
+            const response = await axios.get(`http://localhost:80/sessions/${params.sessionId}`);
+            setData({
+                date: response.data.date,
+                time: response.data.time,
+                location: response.data.location
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    function onChangeDate(e:  React.ChangeEvent<HTMLInputElement>): void {
         setData({
             ...data,
             date: e.target.value
         });
     }
 
-    function onChangeTime(e:  React.ChangeEvent<HTMLInputElement>) {
+    function onChangeTime(e:  React.ChangeEvent<HTMLInputElement>): void {
         setData({
             ...data,
             time: e.target.value
         });
     }
 
-    function onChangeLocation(e:  React.ChangeEvent<HTMLInputElement>) {
+    function onChangeLocation(e:  React.ChangeEvent<HTMLInputElement>): void {
         setData({
             ...data,
             location: e.target.value
         });
+        window.location.assign(`/viewsessions/${params.username}`)
     }
 
-    async function onChange(e: React.MouseEvent<HTMLButtonElement>) {
+    async function onChange(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
         //submit change data and redirect page
+        try{
+            await axios.put(`http://localhost:80/sessions/${params.sessionId}`, data)
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -50,11 +74,11 @@ function EditSession() {
                     <div className="mt-4 bg-white shadow-md rounded-lg text-left">
                         <div className="px-8 py-6 ">
                             <label className="block font-semibold">Date</label>
-                            <input type="text" onChange={onChangeDate} placeholder="yy/mm/dd" className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
+                            <input type="text" value={data.date} onChange={onChangeDate} placeholder="yy/mm/dd" className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
                             <label className="block font-semibold">Time</label>
-                            <input type="text" onChange={onChangeTime} placeholder="00:00 - 23:59" className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
+                            <input type="text" value={data.time} onChange={onChangeTime} placeholder="00:00 - 23:59" className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
                             <label className="block font-semibold">Location</label>
-                            <input type="text" onChange={onChangeLocation} className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
+                            <input type="text" value={data.location} onChange={onChangeLocation} className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
                             <div className="flex justify-between items-baseline"><button onClick={onChange} className="mt-4 bg-purple-500 text-white py-2 px-6 rounded-md hover:bg-purple-600 ">Change</button></div>
                         </div>
                     </div>

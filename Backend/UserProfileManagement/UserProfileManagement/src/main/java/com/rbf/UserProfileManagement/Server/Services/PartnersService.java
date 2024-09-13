@@ -3,12 +3,14 @@ package com.rbf.UserProfileManagement.Server.Services;
 import com.rbf.UserProfileManagement.Server.Exceptions.PartnerNotFoundException;
 import com.rbf.UserProfileManagement.Server.Messaging.Publisher;
 import com.rbf.UserProfileManagement.Server.Models.PartnersModel;
+import com.rbf.UserProfileManagement.Server.Models.UserInfoAndPartnerJoined;
 import com.rbf.UserProfileManagement.Server.Repositories.PartnersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -27,6 +29,10 @@ public class PartnersService {
     public PartnersModel getPartnerById(UUID id) {
         return partnersRepository.findById(id)
                 .orElseThrow(() -> new PartnerNotFoundException(id));
+    }
+
+    public List<Map<String, UserInfoAndPartnerJoined>> getPartnersByOther(UUID id) {
+        return partnersRepository.getPartnersByOther(id);
     }
 
     // create partner

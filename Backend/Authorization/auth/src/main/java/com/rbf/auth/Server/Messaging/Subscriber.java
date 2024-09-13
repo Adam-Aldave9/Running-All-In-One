@@ -1,6 +1,8 @@
 package com.rbf.auth.Server.Messaging;
 
 import com.rbf.auth.Server.Repositories.CredentialRepository;
+import com.rbf.common.payload.MessageWrapper;
+import com.rbf.common.payload.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,12 @@ public class Subscriber {
             feedback = credentialRepository.updateUsername(usernames.getOldUsername(), usernames.getNewUsername());
             logger.info("Retry Result is: " + feedback);
         }
+    }
+
+    @KafkaListener(id = "CPF", topicPartitions = {@TopicPartition(topic = "CreateUserProfileFailed", partitions = {"0"})})
+    private void createProfileFailed(MessageWrapper message) {
+        logger.info("Received Create Profile rollback message in partition 0: " + message.getUsername());
+        credentialRepository.deleteByUsername(message.getUsername());
     }
 
 }

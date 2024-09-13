@@ -1,4 +1,4 @@
-package com.rbf.UserProfileManagement.Server.Messaging;
+package com.rbf.common.payload;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,7 @@
 package com.rbf.Scheduling.Server.Services;
 
 import com.rbf.Scheduling.Server.Exceptions.SessionParticipantNotFoundException;
+import com.rbf.Scheduling.Server.Models.SessionJoinModel;
 import com.rbf.Scheduling.Server.Models.SessionParticipantsModel;
 import com.rbf.Scheduling.Server.Repositories.SessionParticipantsRepository;
 import jakarta.transaction.Transactional;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -25,6 +27,17 @@ public class SessionsParticipantsService {
     public SessionParticipantsModel getSessionParticipantById(UUID id) {
         return sessionsParticipantsRepository.findById(id)
                 .orElseThrow(() -> new SessionParticipantNotFoundException(id));
+    }
+
+    //public List<SessionJoinModel> getSessionsAndParticipants(String username) {
+    public List<Map<String, SessionJoinModel>> getSessionsAndParticipants(String username) {
+        try{
+            return sessionsParticipantsRepository.getSessionsAndParticipants(username);
+        } catch (Exception e) {
+            System.out.println("Error in getSessionsAndParticipants "+e.getMessage());
+        }
+        return null;
+        //return sessionsParticipantsRepository.getSessionsAndParticipants(username);
     }
 
     //create session participant
