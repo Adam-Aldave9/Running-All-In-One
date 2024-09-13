@@ -55,10 +55,12 @@ public class CredentialsController {
     @GetMapping(path="/verify/{username}/{password}")
     public ResponseEntity<Exists> verifyCredentials(@PathVariable String username, @PathVariable String password) {
         try{
-            System.out.println("output is " +credentialService.verifyCredentials(username, password));
-            Exists exists = new Exists(credentialService.verifyCredentials(username, password));
+            //System.out.println("output is " +credentialService.verifyCredentials(username, password));
+            boolean res = credentialService.verifyCredentials(username, password);
+            Exists exists = new Exists(res);
             return ResponseEntity.ok(exists);
         } catch (Exception e) {
+            System.out.println("we are here");
             System.out.println("error is " +e.getMessage());
             return ResponseEntity.ok(new Exists(false));
         }

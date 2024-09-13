@@ -74,12 +74,14 @@ public class CredentialsService {
 
     public boolean verifyCredentials(String username, String password) {
         boolean res = credentialsRepository.existsByUsernameAndPassword(username, password);
+        System.out.println("res 1 is " +res);
         if(res){
             // get id given username
             UUID id = credentialsRepository.findIdByUsername(username);
             LocalDate date = LocalDate.now();
             historyRepository.updateLastLogin(id, date);
         }
+        System.out.println("res 2 is " +res);
         return res;
     }
 

@@ -5,7 +5,7 @@ function SignUp(): JSX.Element {
 	const [newUser, setNewUser] = useState({
         username: "",
         password: "",
-		date_created: ""
+		dateCreated: ""
     })
 
 	useEffect(() => {
@@ -13,10 +13,10 @@ function SignUp(): JSX.Element {
 		let day = String(date.getDate()).padStart(2, '0');
 		let month = String(date.getMonth() + 1).padStart(2, '0');
 		let year = date.getFullYear();
-		let dateCreated = month + '/' + day + '/' + year;
+		let currDate = month + '/' + day + '/' + year;
 		setNewUser({
 			...newUser,
-			date_created: dateCreated
+			dateCreated: currDate
 		})
 	}, [])
 

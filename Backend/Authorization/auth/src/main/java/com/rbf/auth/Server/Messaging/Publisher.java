@@ -1,5 +1,7 @@
 package com.rbf.auth.Server.Messaging;
 
+import com.rbf.common.payload.MessageWrapper;
+import com.rbf.common.payload.Payload;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -35,9 +37,4 @@ public class Publisher {
         this.kafkaTemplateOther.send(TOPIC_CREATE_PROFILE_RECORD, 0, "CPR", message); //send message to a topic
     }
 
-}
-
-@Getter @Setter
-class MessageWrapper{
-    private String username;
 }

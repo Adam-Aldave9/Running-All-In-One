@@ -1,5 +1,6 @@
 package com.rbf.Scheduling.Server.Messaging;
 
+import com.rbf.common.payload.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

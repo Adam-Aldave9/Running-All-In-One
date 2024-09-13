@@ -3,8 +3,8 @@ package com.rbf.UserProfileManagement.Server.Messaging;
 import com.rbf.UserProfileManagement.Server.Models.UserInformationModel;
 import com.rbf.UserProfileManagement.Server.Repositories.PartnersRepository;
 import com.rbf.UserProfileManagement.Server.Repositories.UserInformationRepository;
-import lombok.Getter;
-import lombok.Setter;
+import com.rbf.common.payload.MessageWrapper;
+import com.rbf.common.payload.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,14 +115,9 @@ public class Subscriber {
                 publisher.createProfileFailed(message);
             }
         } catch (Exception e) {
+            logger.info("Exception is: " + e.getMessage());
             logger.info("Create Profile failed in UPAM. Sending message to rollback");
             publisher.createProfileFailed(message);
         }
     }
-}
-
-@Getter
-@Setter
-class MessageWrapper{
-    private String username;
 }
