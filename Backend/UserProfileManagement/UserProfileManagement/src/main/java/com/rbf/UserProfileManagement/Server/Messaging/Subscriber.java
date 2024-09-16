@@ -25,7 +25,7 @@ public class Subscriber {
     @Autowired
     private Publisher publisher;
 
-    // auth service must send a map with old and new usernames to this listener
+    // auth service must send an object with old and new usernames to this listener
     @KafkaListener(id = "UUC", topicPartitions = {@TopicPartition(topic = "UpdateUsernameUPAM", partitions = {"0"})})
     private void updateUsername(Payload usernames) {
         logger.info("Update Username Received Message in partition 0: " + usernames.getNewUsername());
@@ -57,7 +57,7 @@ public class Subscriber {
         }
     }
 
-    // "remove sessions" failed in SAT Service. Need to readd partner for rollback
+    // "remove sessions" failed in SAT Service. Need to re-add partner for rollback
     @KafkaListener(id = "DSFC", topicPartitions = {@TopicPartition(topic = "DeleteSessionsFailed", partitions = {"0"})})
     private void deleteSessionsFailed(Payload payload) { //<user_id (owning partner), restored partner username>
         logger.info("Received Message in deleteSessionsFailed partition 0: ");
@@ -70,30 +70,6 @@ public class Subscriber {
             logger.info("Partner rollback failed in UPAM. Retrying");
             feedback = partnersRepository.addPartner(partner_id, payload.getUserId(), payload.getSecondPartner()); //rollback partner
             logger.info("Retry Result is: " + feedback);
-        }
-    }
-
-    // add a partner to a user from data given from SAPR Service
-    // SAPR should give map with keys user_id, partner, requestor, requestee
-    @KafkaListener(id = "APC", topicPartitions = {@TopicPartition(topic = "AddPartner", partitions = {"0"})})
-    private void addPartner(Payload payload) {
-        logger.info("Received Message in partition 0 addpartner: ");
-        UUID partner_id = UUID.randomUUID();
-        int feedback = partnersRepository.addPartner(partner_id, payload.getUserId(), payload.getSecondPartner()); //add partner
-        if(feedback == 1) { //if partner was added successfully
-            logger.info("Partner added successfully in UPAM");
-        }
-        else if(feedback == 0) { //if partner was not added successfully
-            logger.info("Partner add failed in UPAM. Retrying");
-            feedback = partnersRepository.addPartner(partner_id, payload.getUserId(), payload.getSecondPartner()); //add partner
-            logger.info("Retry Result is: " + feedback);
-            if(feedback == 1) {
-                logger.info("Partner added successfully in UPAM");
-            }
-            else {
-                logger.info("Partner add failed in UPAM. Sending requester and requested for rollback");
-                publisher.addPartnerFailed(payload.getRequester(), payload.getRequested());
-            }
         }
     }
 
