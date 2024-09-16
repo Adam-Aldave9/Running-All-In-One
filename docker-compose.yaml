@@ -67,7 +67,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://localhost:9092,AUTHENTICATION://kafka:19092,UPAM://kafka:39092,SAT://kafka:49092,SAPR://kafka:59092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://localhost:9092,AUTHENTICATION://kafka:19092,UPAM://kafka:39092,SAT://kafka:49092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_HOST:PLAINTEXT,AUTHENTICATION:PLAINTEXT,UPAM:PLAINTEXT,SAT:PLAINTEXT,SAPR:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: AUTHENTICATION
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -88,9 +88,6 @@ services:
       (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic UpdateUsernameSAT --partitions 1 --replication-factor 1) &&
       (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic DeleteSessions --partitions 1 --replication-factor 1) &&
       (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic DeleteSessionsFailed --partitions 1 --replication-factor 1) &&
-      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic AddPartner --partitions 1 --replication-factor 1) &&
-      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic AddPartnerFailed --partitions 1 --replication-factor 1) &&
-      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic UpdateUsernameSAPR --partitions 1 --replication-factor 1) &&
       (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic CreateUserProfile --partitions 1 --replication-factor 1) &&
       (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic CreateUserProfileFailed --partitions 1 --replication-factor 1) &&
       (echo \"Topics created successfully\") &&
@@ -124,12 +121,6 @@ services:
     ports:
       - "8081:8081"
 
-  # partner-request-service:
-  #   build: ./Backend/PartnerRequests
-  #   container_name: partner-request-service
-  #   ports:
-  #     - "8000:8000"
-
   scheduling-service:
     build: ./Backend/SchedulingAndTracking/Scheduling
     container_name: scheduling-service
@@ -150,7 +141,6 @@ services:
       - authorization-service
       - user-profile-management-service
       - scheduling-service
-      #- partner-request-service
     ports:
       - "80:80"
 

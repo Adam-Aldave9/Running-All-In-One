@@ -17,7 +17,6 @@ public class Publisher {
     private final String TOPIC_UPDATE_USERNAME_SAT = "UpdateUsernameSAT";
     private final String TOPIC_UPDATE_USERNAME_FAILED = "UpdateUsernameFailed";
     private final String TOPIC_DELETE_SESSIONS = "DeleteSessions";
-    private final String TOPIC_ADD_PARTNER_FAILED = "AddPartnerFailed";
     private final String TOPIC_CREATE_USER_PROFILE_FAILED = "CreateUserProfileFailed";
 
     @Autowired
@@ -50,16 +49,6 @@ public class Publisher {
         payload.setSecondPartner(secondPartner);
         payload.setUserId(user_id);
         this.kafkaTemplate.send(TOPIC_DELETE_SESSIONS, 0, "DS", payload);
-    }
-
-    // could not add partner, send requester and requested for rollback in SAPR
-    // put in addPartner in Subscriber
-    public void addPartnerFailed(String requester, String requested) {
-        logger.info("Sending requestor and requestee for rollback: " + requester + " " + requested);
-        Payload payload = new Payload();
-        payload.setRequester(requester);
-        payload.setRequested(requested);
-        this.kafkaTemplate.send(TOPIC_ADD_PARTNER_FAILED, 0, "APF", payload);
     }
 
     public void createProfileFailed(MessageWrapper message) {

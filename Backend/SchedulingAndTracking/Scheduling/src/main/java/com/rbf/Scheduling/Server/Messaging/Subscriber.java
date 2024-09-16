@@ -29,31 +29,12 @@ public class Subscriber {
         int spUpdated = sessionParticipantsRepository.updateUsername(usernames.getNewUsername(), usernames.getOldUsername());
         if(gpUpdated + spUpdated >= 1) { //if username was updated successfully
             logger.info("Username updated successfully in UPAM");
-            publisher.updateUsernameSAPR(usernames.getNewUsername(), usernames.getOldUsername());
         }
         else if(gpUpdated + spUpdated == 0) { //if username was not updated successfully
             logger.info("Username update failed in UPAM");
             // partition 1 belongs to the authentication listener for rollback
             // send back old username for rollback in UPAM service
             publisher.updateUsernameFailed(usernames.getNewUsername(), usernames.getOldUsername());
-        }
-    }
-
-    //update username failed
-    @KafkaListener(id = "UUFC", topicPartitions = {@TopicPartition(topic = "UpdateUsernameFailed", partitions = {"2"})})
-    private void updateUsernameFailed(Payload usernames) {
-        logger.info("Received Username rollback message in partition 2: " + usernames.getNewUsername());
-        int gpUpdated = groupParticipantsRepository.updateUsername(usernames.getOldUsername(), usernames.getNewUsername()); //query to update username
-        int spUpdated = sessionParticipantsRepository.updateUsername(usernames.getOldUsername(), usernames.getNewUsername());
-        if(gpUpdated + spUpdated >= 1)  { //if username was rolled back successfully
-            logger.info("Username rolled back successfully in UPAM");
-        }
-        else{
-            logger.info("Username rollback failed in UPAM. Retrying");
-            gpUpdated = groupParticipantsRepository.updateUsername(usernames.getOldUsername(), usernames.getNewUsername()); //query to update username
-            spUpdated = sessionParticipantsRepository.updateUsername(usernames.getOldUsername(), usernames.getNewUsername());
-            logger.info("Retry Result is: " + gpUpdated);
-            logger.info("Retry Result is: " + spUpdated);
         }
     }
 

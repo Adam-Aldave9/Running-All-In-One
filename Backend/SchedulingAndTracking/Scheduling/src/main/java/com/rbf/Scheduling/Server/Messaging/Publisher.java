@@ -30,12 +30,4 @@ public class Publisher {
         this.kafkaTemplate.send("DeleteSessionsFailed", 0, "DSF", payload);
     }
 
-    public void updateUsernameSAPR(String newUsername, String oldUsername){
-        logger.info("Sending message to update username in SAPR: " + newUsername);
-        Payload payload = new Payload();
-        payload.setOldUsername(oldUsername);
-        payload.setNewUsername(newUsername);
-        this.kafkaTemplate.send("UpdateUsernameSAPR", 0, "UUSAPR", payload); //send message to a topic
-    }
-
 }
