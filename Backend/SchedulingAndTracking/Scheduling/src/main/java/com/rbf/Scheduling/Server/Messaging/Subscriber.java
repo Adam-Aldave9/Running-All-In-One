@@ -1,6 +1,5 @@
 package com.rbf.Scheduling.Server.Messaging;
 
-import com.rbf.Scheduling.Server.Repositories.GroupParticipantsRepository;
 import com.rbf.Scheduling.Server.Repositories.SessionParticipantsRepository;
 
 import com.rbf.common.KafkaPayloads.Payload;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 public class Subscriber {
     private final Logger logger = LoggerFactory.getLogger(Publisher.class);
     @Autowired
-    private GroupParticipantsRepository groupParticipantsRepository;
-    @Autowired
     private SessionParticipantsRepository sessionParticipantsRepository;
     @Autowired
     Publisher publisher;
@@ -25,12 +22,11 @@ public class Subscriber {
     @KafkaListener(id = "UUC", topicPartitions = {@TopicPartition(topic = "UpdateUsernameSAT", partitions = {"0"})})
     private void updateUsernamesSAT(Payload usernames) {
         logger.info("Update Username Received Message in partition 0: " + usernames.getNewUsername());
-        int gpUpdated = groupParticipantsRepository.updateUsername(usernames.getNewUsername(), usernames.getOldUsername()); //query to update username
         int spUpdated = sessionParticipantsRepository.updateUsername(usernames.getNewUsername(), usernames.getOldUsername());
-        if(gpUpdated + spUpdated >= 1) { //if username was updated successfully
+        if(spUpdated >= 1) { //if username was updated successfully
             logger.info("Username updated successfully in UPAM");
         }
-        else if(gpUpdated + spUpdated == 0) { //if username was not updated successfully
+        else if(spUpdated == 0) { //if username was not updated successfully
             logger.info("Username update failed in UPAM");
             // partition 1 belongs to the authentication listener for rollback
             // send back old username for rollback in UPAM service
