@@ -1,6 +1,6 @@
 package com.rbf.Scheduling.Server.Controllers;
 
-import com.rbf.Scheduling.Server.Models.SessionJoinModel;
+import com.rbf.Scheduling.Server.DTOs.SessionJoinModel;
 import com.rbf.Scheduling.Server.Models.SessionParticipantsModel;
 import com.rbf.Scheduling.Server.Services.SessionsParticipantsService;
 import org.springframework.beans.factory.annotation.Autowired;

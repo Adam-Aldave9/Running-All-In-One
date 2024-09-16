@@ -1,5 +1,6 @@
 package com.rbf.UserProfileManagement.Server.Controllers;
 
+import com.rbf.UserProfileManagement.Server.DTOs.FindByEitherNameModel;
 import com.rbf.UserProfileManagement.Server.Models.UserInformationModel;
 import com.rbf.UserProfileManagement.Server.Services.UserInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +27,18 @@ public class UserInformationController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<UserInformationModel> getUserById(@PathVariable UUID id) {
         return ResponseEntity.ok(userInformationService.getUserById(id));
+    }
+
+    // get by either name for search bar queries
+    @GetMapping(path = "/find/{nameInput}")
+    public ResponseEntity<List<Map<String, FindByEitherNameModel>>> findByEitherName(@PathVariable String nameInput) {
+        return ResponseEntity.ok(userInformationService.findEitherName(nameInput));
+    }
+
+    // get user id be username
+    @GetMapping(path = "/findid/{username}")
+    public ResponseEntity<Map<String, UUID>> findUserIdByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(userInformationService.findUserIdByUsername(username));
     }
 
     // create user

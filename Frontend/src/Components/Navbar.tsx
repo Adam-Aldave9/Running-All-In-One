@@ -1,6 +1,19 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-function Navbar(): JSX.Element {
+function Navbar(props: {username: string | undefined, userid: string | undefined}): JSX.Element {
+    const [search, setSearch] = useState("");
+    function onSearchChange(e: React.ChangeEvent<HTMLInputElement>): void {
+        setSearch(e.target.value);
+    }
+
+    function onEnter(e: React.KeyboardEvent<HTMLInputElement>): void {
+        if(e.key === "Enter") {
+            // redirect to search page
+            window.location.assign(`/partneradd/${props.username}/${props.userid}/${search}`);
+        }
+    }
+    // write logic for search bar and redirect on search
     return(
         <header className="bg-white">
             <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-teal-700 lg:px-8">
@@ -19,7 +32,7 @@ function Navbar(): JSX.Element {
                                 <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
                             </svg>
                             </div>
-                            <input id="search" name="search" className="block w-full rounded-md border-0 bg-teal-500 py-1.5 pl-10 pr-3 text-yellow-300 placeholder:text-yellow-400 focus:bg-white focus:text-gray-900 focus:ring-0 focus:placeholder:text-gray-500 sm:text-sm sm:leading-6" placeholder="Search" type="search"/>
+                            <input id="search" onChange={onSearchChange} onKeyDown={onEnter} name="search" className="block w-full rounded-md border-0 bg-teal-500 py-1.5 pl-10 pr-3 text-yellow-300 placeholder:text-yellow-400 focus:bg-white focus:text-gray-900 focus:ring-0 focus:placeholder:text-gray-500 sm:text-sm sm:leading-6" placeholder="Search" type="search"/>
                         </div>
                         </div>
                     </div>

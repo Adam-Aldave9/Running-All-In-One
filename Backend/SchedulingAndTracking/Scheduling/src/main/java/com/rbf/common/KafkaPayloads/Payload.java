@@ -1,4 +1,4 @@
-package com.rbf.common.payload;
+package com.rbf.common.KafkaPayloads;
 
 import lombok.Getter;
 import lombok.Setter;

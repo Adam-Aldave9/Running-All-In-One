@@ -20,8 +20,8 @@ function UserProfile(): JSX.Element {
   }
 
   interface Partners { 
-    partnerId: string,
     partnerName: string
+    partnerId: string,
   }
 
   const params = useParams<{username: string, userid: string}>();
@@ -66,7 +66,7 @@ function UserProfile(): JSX.Element {
     }
   }
 
-  async function onClickRemove(e: React.MouseEvent<HTMLButtonElement>, partnerName: string): Promise<void> {
+  async function onClickRemove(partnerName: string): Promise<void> {
     //remove partner from partner table
     await axios.delete(`http://localhost:80/partners/${params.userid}/${partnerName}`);
   }
@@ -76,7 +76,7 @@ function UserProfile(): JSX.Element {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-7 border-b border-gray-300">
               <div className="font-semibold text-gray-950">{props.partnerName}</div>
               <div className="md:col-span-2 text-gray-700">
-                  <button onClick={(e) => onClickRemove(e, props.partnerName)} className="mt-4 p-1 inline-block w-auto h-auto cursor-pointer items-center rounded-md bg-black px-6 py-3 text-center font-semibold text-white">Remove</button>
+                  <button onClick={(e) => onClickRemove(props.partnerName)} className="mt-4 p-1 inline-block w-auto h-auto cursor-pointer items-center rounded-md bg-black px-6 py-3 text-center font-semibold text-white">Remove</button>
               </div>
           </div>
       )
@@ -90,7 +90,7 @@ function UserProfile(): JSX.Element {
 
   return (
       <section className = "min-h-screen from-purple-200 via-purple-300 to-purple-500 bg-gradient-to-br">
-        <Navbar />
+        <Navbar username={params.username} userid={params.userid}></Navbar>
         {/* Container */}
         <div className="mx-auto w-full max-w-7xl px-5 py-10 md:px-10 ">
           {/* Title */}

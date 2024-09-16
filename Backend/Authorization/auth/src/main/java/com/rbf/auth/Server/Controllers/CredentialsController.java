@@ -2,6 +2,7 @@ package com.rbf.auth.Server.Controllers;
 
 import com.rbf.auth.Server.Models.CredentialsModel;
 import com.rbf.auth.Server.Services.CredentialsService;
+import com.rbf.auth.Server.DTOs.Exists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -77,22 +78,5 @@ public class CredentialsController {
     public ResponseEntity deleteCredential(@PathVariable UUID id) {
         credentialService.deleteCredential(id);
         return ResponseEntity.noContent().build();
-    }
-}
-
-
-class Exists {
-    private boolean exists;
-
-    public Exists(boolean exists) {
-        this.exists = exists;
-    }
-
-    public boolean isExists() {
-        return exists;
-    }
-
-    public void setExists(boolean exists) {
-        this.exists = exists;
     }
 }

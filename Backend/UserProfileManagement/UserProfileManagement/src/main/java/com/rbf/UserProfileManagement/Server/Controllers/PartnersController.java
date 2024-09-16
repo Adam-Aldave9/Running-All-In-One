@@ -1,8 +1,9 @@
 package com.rbf.UserProfileManagement.Server.Controllers;
 
 import com.rbf.UserProfileManagement.Server.Models.PartnersModel;
-import com.rbf.UserProfileManagement.Server.Models.UserInfoAndPartnerJoined;
+import com.rbf.UserProfileManagement.Server.DTOs.UserInfoAndPartnerJoined;
 import com.rbf.UserProfileManagement.Server.Services.PartnersService;
+import com.rbf.UserProfileManagement.Server.DTOs.PartnerNameByOwnerModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,11 @@ public class PartnersController {
         return ResponseEntity.ok(partnersService.getPartnersByOther(id));
     }
 
+    @GetMapping(path="/ownedpartners/names/{id}")
+    public ResponseEntity<List<Map<String, PartnerNameByOwnerModel>>> getPartnerNamesByOwner(@PathVariable UUID id) {
+        return ResponseEntity.ok(partnersService.getPartnerNamesByOwner(id));
+    }
+
     //create partner
     @PostMapping(path="/add")
     public ResponseEntity<PartnersModel> addPartner(@RequestBody PartnersModel newPartner) {
@@ -53,4 +59,5 @@ public class PartnersController {
         partnersService.deletePartner(id, user);
         return ResponseEntity.noContent().build();
     }
+
 }

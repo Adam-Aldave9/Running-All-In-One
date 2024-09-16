@@ -3,8 +3,9 @@ package com.rbf.UserProfileManagement.Server.Services;
 import com.rbf.UserProfileManagement.Server.Exceptions.PartnerNotFoundException;
 import com.rbf.UserProfileManagement.Server.Messaging.Publisher;
 import com.rbf.UserProfileManagement.Server.Models.PartnersModel;
-import com.rbf.UserProfileManagement.Server.Models.UserInfoAndPartnerJoined;
+import com.rbf.UserProfileManagement.Server.DTOs.UserInfoAndPartnerJoined;
 import com.rbf.UserProfileManagement.Server.Repositories.PartnersRepository;
+import com.rbf.UserProfileManagement.Server.DTOs.PartnerNameByOwnerModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +32,14 @@ public class PartnersService {
                 .orElseThrow(() -> new PartnerNotFoundException(id));
     }
 
+    // get partners by other
     public List<Map<String, UserInfoAndPartnerJoined>> getPartnersByOther(UUID id) {
         return partnersRepository.getPartnersByOther(id);
+    }
+
+    // get partner names by owner
+    public List<Map<String, PartnerNameByOwnerModel>> getPartnerNamesByOwner(UUID userId) {
+        return partnersRepository.getPartnerNamesByOwner(userId);
     }
 
     // create partner
@@ -57,13 +64,13 @@ public class PartnersService {
     // delete partner
     // id is owning partner
     public void deletePartner(UUID id, String user) {
-        partnersRepository.deleteSpecificPartner(id, user);
-        boolean exists = !partnersRepository.getSpecificPartner(id, user).isEmpty();
-        if (exists) {
+        int res = partnersRepository.deleteSpecificPartner(id, user);
+        PartnersModel specificPartner = partnersRepository.getSpecificPartner(id, user);
+        // put the partner_name as the second partner in the publisher method
+        if (res != 1) { // delete failed need to rollback
             // rollback
-            publisher.deleteSessions(user, partnersRepository.getSpecificPartner(id, user).get(0).getPartnerName(), id.toString());
+            publisher.deleteSessions(user, specificPartner.getPartnerName(), id.toString());
         }
     }
-
 
 }

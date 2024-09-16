@@ -1,6 +1,7 @@
 package com.rbf.UserProfileManagement.Server.Services;
 
 import com.rbf.UserProfileManagement.Server.Exceptions.UserInformationNotFoundException;
+import com.rbf.UserProfileManagement.Server.DTOs.FindByEitherNameModel;
 import com.rbf.UserProfileManagement.Server.Models.UserInformationModel;
 import com.rbf.UserProfileManagement.Server.Repositories.UserInformationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -25,6 +27,16 @@ public class UserInformationService {
     public UserInformationModel getUserById(UUID id) {
         return userInformationRespository.findById(id)
                 .orElseThrow(() -> new UserInformationNotFoundException(id));
+    }
+
+    // get either or both username or name for search bar queries
+    public List<Map<String, FindByEitherNameModel>> findEitherName(String nameInput) {
+        return userInformationRespository.findByEitherName(nameInput);
+    }
+
+    // get user id by username
+    public Map<String, UUID> findUserIdByUsername(String username) {
+        return userInformationRespository.findUserIdByUsername(username);
     }
 
     // create user

@@ -1,4 +1,4 @@
-package com.rbf.UserProfileManagement.Server.Models;
+package com.rbf.UserProfileManagement.Server.DTOs;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

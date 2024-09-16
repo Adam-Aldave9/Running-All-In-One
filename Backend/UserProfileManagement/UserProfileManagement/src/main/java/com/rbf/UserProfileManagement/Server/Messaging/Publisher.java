@@ -1,7 +1,7 @@
 package com.rbf.UserProfileManagement.Server.Messaging;
 
-import com.rbf.common.payload.MessageWrapper;
-import com.rbf.common.payload.Payload;
+import com.rbf.common.KafkaPayloads.MessageWrapper;
+import com.rbf.common.KafkaPayloads.Payload;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

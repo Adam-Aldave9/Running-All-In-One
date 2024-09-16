@@ -5,7 +5,7 @@ import axios from "axios";
 
 function CreateSession(): JSX.Element {
     interface ParticipantData {
-        partnerOne: string | undefined
+        partnerOne: string | undefined,
         partnerTwo: string,
         sessionId: string
     }
@@ -63,7 +63,7 @@ function CreateSession(): JSX.Element {
         });
     }
 
-    async function onCreateSession(e:  React.MouseEvent<HTMLButtonElement>): Promise<void> {
+    async function onCreateSession(): Promise<void> {
         //send request to sessions and session participants table
         //query sessionId or are we able to generate one and send with payload?
         try{
@@ -81,20 +81,20 @@ function CreateSession(): JSX.Element {
 
     return (
         <section className = "min-h-screen from-purple-200 via-purple-300 to-purple-500 bg-gradient-to-br">
-            <Navbar />
+            <Navbar username={params.username} userid={params.userid}></Navbar>
             <div className="mt-32">
                 <div className="relative py-3 sm:w-96 mx-auto text-center">
                     <span className="text-2xl font-light ">Create Session</span>
                     <div className="mt-4 bg-white shadow-md rounded-lg text-left">
                         <div className="px-8 py-6 ">
                             <label className="block font-semibold">Date</label>
-                            <input type="text" onChange={onChangeDate} placeholder="yy/mm/dd" className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
+                            <input type="text" onChange={onChangeDate} placeholder="yy/mm/dd" className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> 
                             <label className="block font-semibold">Time</label>
-                            <input type="text" onChange={onChangeTime} placeholder="00:00 - 23:59" className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
+                            <input type="text" onChange={onChangeTime} placeholder="00:00 - 23:59" className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/>
                             <label className="block font-semibold">Location</label>
-                            <input type="text" onChange={onChangeLocation}  className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*placeholder will be function call for current group name */}
+                            <input type="text" onChange={onChangeLocation}  className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/>
                             <label className="block font-semibold">Running Partner</label>
-                            <input type="text" onChange={onChangeRunningPartner} className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/> {/*Replace with dropdown list of partners*/}                      
+                            <input type="text" onChange={onChangeRunningPartner} className="border w-full h-5 px-3 py-5 mt-2 hover:outline-none focus:outline-none focus:ring-indigo-500 focus:ring-1 rounded-md"/>                    
                             <div className="flex justify-between items-baseline"><button onClick={onCreateSession} className="mt-4 bg-purple-500 text-white py-2 px-6 rounded-md hover:bg-purple-600 ">Create</button></div>
                         </div>
                     </div>

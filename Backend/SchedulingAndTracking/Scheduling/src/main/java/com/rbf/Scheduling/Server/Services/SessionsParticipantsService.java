@@ -1,7 +1,7 @@
 package com.rbf.Scheduling.Server.Services;
 
 import com.rbf.Scheduling.Server.Exceptions.SessionParticipantNotFoundException;
-import com.rbf.Scheduling.Server.Models.SessionJoinModel;
+import com.rbf.Scheduling.Server.DTOs.SessionJoinModel;
 import com.rbf.Scheduling.Server.Models.SessionParticipantsModel;
 import com.rbf.Scheduling.Server.Repositories.SessionParticipantsRepository;
 import jakarta.transaction.Transactional;

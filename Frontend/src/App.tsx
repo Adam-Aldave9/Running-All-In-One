@@ -7,13 +7,8 @@ import CreateSession from './Components/CreateSession';
 import EditSession from './Components/EditSession';
 import UserProfile from './Components/UserProfile';
 import EditUserProfile from './Components/EditUserProfile';
-import ViewAssociated from './Components/ViewAssociated';
-import CreateGroup from './Components/CreateGroup';
-import EditGroup from './Components/EditGroup';
-import Search from './Components/Search';
-import './App.css';
 import PartnerAddPage from './Components/PartnerAddPage';
-import SearchResults from './Components/SearchResults';
+import './App.css';
 
 function App() {
   return (
@@ -28,11 +23,7 @@ function App() {
           <Route path="/editsession/:username/:sessionid" element={<EditSession></EditSession>} />
           <Route path="/userprofile/:username/:userid" element={<UserProfile></UserProfile>} />
           <Route path="/edituserprofile/:username/:userid" element={<EditUserProfile></EditUserProfile>} />
-          <Route path="/viewassociated/:username/:userid" element={<ViewAssociated></ViewAssociated>} />
-          <Route path="/creategroup/:username/:userid" element={<CreateGroup></CreateGroup>} />{/**may wipe out groups */}
-          <Route path="/editgroup/:username/:userid/:groupid" element={<EditGroup></EditGroup>} />
-          <Route path="/searchresults/:username/:userid" element={<SearchResults></SearchResults>} />
-          <Route path="/partneradd/:username/:userid" element={<PartnerAddPage></PartnerAddPage>} />
+          <Route path="/partneradd/:username/:userid/:search" element={<PartnerAddPage></PartnerAddPage>} />
         </Routes>
       </div>
     </BrowserRouter>
