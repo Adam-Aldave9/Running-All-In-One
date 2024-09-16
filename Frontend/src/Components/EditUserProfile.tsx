@@ -78,7 +78,7 @@ function EditUserProfile(): JSX.Element {
         });
     }
 
-    async function onChange(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+    async function onChange(): Promise<void> {
         //PUT request info to backend and redirect page
         await axios.put(`http://localhost:80/userinformation/${params.userid}`, userInformation);
         window.location.assign("http://localhost:3000/userprofile/" + params.username + "/" + params.userid);
@@ -87,7 +87,7 @@ function EditUserProfile(): JSX.Element {
 
     return (
         <section className = "min-h-screen from-purple-200 via-purple-300 to-purple-500 bg-gradient-to-br">
-            <Navbar />
+            <Navbar username={params.username} userid={params.userid}></Navbar>
             <div className="mt-8">
                 <div className="relative py-3 sm:w-96 mx-auto text-center">
                     <span className="text-2xl font-light ">Edit Profile</span>

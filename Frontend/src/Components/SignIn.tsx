@@ -23,7 +23,7 @@ function SignIn(): JSX.Element {
 		});
 	}
 
-	async function onSignIn(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+	async function onSignIn(): Promise<void> {
 		const params = {
 			username: user.username,
 			password: user.password

@@ -36,7 +36,7 @@ function SignUp(): JSX.Element {
         })
     }
 
-	async function onSignUp(e: React.MouseEvent<HTMLButtonElement>): Promise<void>{
+	async function onSignUp(): Promise<void>{
 		try{
 			let responseCred = await axios.post("http://localhost:80/credentials/add", newUser)
 			if(responseCred.status == 200){

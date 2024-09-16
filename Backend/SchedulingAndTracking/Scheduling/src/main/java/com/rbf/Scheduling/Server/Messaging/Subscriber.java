@@ -3,7 +3,7 @@ package com.rbf.Scheduling.Server.Messaging;
 import com.rbf.Scheduling.Server.Repositories.GroupParticipantsRepository;
 import com.rbf.Scheduling.Server.Repositories.SessionParticipantsRepository;
 
-import com.rbf.common.payload.Payload;
+import com.rbf.common.KafkaPayloads.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

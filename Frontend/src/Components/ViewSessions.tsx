@@ -29,16 +29,16 @@ function ViewSessions(): JSX.Element {
         time: "",
         sessionId: ""
     }]);
+    const [userID, setUserID] = useState("");
 
     useEffect(() => {
         // get all user sessions
         loadSessionsData();
+        getUserId();
     }, [])
 
     async function loadSessionsData(): Promise<void> {
         // get sessions for the month and year selected
-        // need to use a join query to get sessionId, date, time, location, from sessions table
-        // and partner_one, partner_two from session participants
         try{
             const response = await axios.get(`http://localhost:80/sessionparticipants/sessionsjoin/${params.username}`)
             if(response.data.length === 0) {
@@ -47,7 +47,6 @@ function ViewSessions(): JSX.Element {
             }
             setSessionData(response.data);
         } catch (error) {
-            setSessionData([{partnerOne: "Counter Partner", partnerTwo: "ffd", date: "2024/02/16", location: "loc", time: "23:59", sessionId: "alhsdjflasjdflasdfj"}]);
             console.error("error loading sessions " + error)
         }
     }
@@ -77,7 +76,7 @@ function ViewSessions(): JSX.Element {
         })
         return sorted.map((session: SessionData) => {
             return <Document partnerOne={session.partnerOne} partnerTwo={session.partnerTwo} time={session.time} location={session.location} sessionId={session.sessionId}/>
-            })
+        })
     }
 
     function DisplaySessions(): JSX.Element {
@@ -90,7 +89,6 @@ function ViewSessions(): JSX.Element {
     }
 
     function Document(props: {partnerOne: string, partnerTwo: string, time: string, location: string, sessionId: string}): JSX.Element {
-        // add button to lead to edit session page. in edit session we should also have a delete option
         let partner: string
         if(params.username === props.partnerOne) partner = props.partnerTwo;
         else partner = props.partnerOne;
@@ -120,11 +118,15 @@ function ViewSessions(): JSX.Element {
         });
     }
 
+    async function getUserId(): Promise<void> {
+        const response = await axios.get(`http://localhost:80/userinformation/find/${params.username}`)
+        setUserID(response.data.userId)
+    }
 
     return (
         <section className = "min-h-screen from-purple-200 via-purple-300 to-purple-500 bg-gradient-to-br">
-            <div> {/**Need mapping for buttons to edit each session */}
-                <Navbar></Navbar>
+            <div> 
+                <Navbar username={params.username} userid={userID}></Navbar>
                 <section className="p-4">
                     <div className="mb-2 text-lg font-semibold">Choose Year and Month to View Sessions</div>
                     <input 

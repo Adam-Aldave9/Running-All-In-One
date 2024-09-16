@@ -1,8 +1,8 @@
 package com.rbf.auth.Server.Messaging;
 
 import com.rbf.auth.Server.Repositories.CredentialRepository;
-import com.rbf.common.payload.MessageWrapper;
-import com.rbf.common.payload.Payload;
+import com.rbf.common.KafkaPayloads.MessageWrapper;
+import com.rbf.common.KafkaPayloads.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
