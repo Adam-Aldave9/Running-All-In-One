@@ -10,11 +10,11 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: auth
-      PGPORT: 5432
+      PGPORT: 5439
     volumes:
       - C:\postgres_container_data\auth:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5439:5439"
 
   user-profile-db:
     image: postgres
@@ -67,7 +67,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://localhost:9092,AUTHENTICATION://kafka:19092,UPAM://kafka:39092,SAT://kafka:49092,SAPR://kafka:59092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://localhost:9092,AUTHENTICATION://kafka:19092,UPAM://kafka:39092,SAT://kafka:49092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_HOST:PLAINTEXT,AUTHENTICATION:PLAINTEXT,UPAM:PLAINTEXT,SAT:PLAINTEXT,SAPR:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: AUTHENTICATION
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -82,14 +82,14 @@ services:
     entrypoint: [ '/bin/sh', '-c' ]
     command: |
       'sh -c "
-      (sleep 40) &&
-      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic UpdateUsernameUPAM)&&(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameUPAM --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameUPAM --create --partitions 1 --replication-factor 1)) &&
-      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic UpdateUsernameFailed)&&(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameFailed --create --partitions 3 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameFailed --create --partitions 3 --replication-factor 1)) &&
-      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic UpdateUsernameSAT)&&(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameSAT --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameSAT --create --partitions 1 --replication-factor 1)) &&
-      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic DeleteSessions)&&(kafka-topics --bootstrap-server kafka:19092 --topic DeleteSessions --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic DeleteSessions --create --partitions 1 --replication-factor 1)) &&
-      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic AddPartner)&&(kafka-topics --bootstrap-server kafka:19092 --topic AddPartner --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic AddPartner --create --partitions 1 --replication-factor 1)) &&
-      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic AddPartnerFailed)&&(kafka-topics --bootstrap-server kafka:19092 --topic AddPartnerFailed --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic AddPartnerFailed --create --partitions 1 --replication-factor 1)) &&
-      (((kafka-topics --delete --bootstrap-server kafka:19092 --topic UpdateUsernameSAPR)&&(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameSAPR --create --partitions 1 --replication-factor 1))||(kafka-topics --bootstrap-server kafka:19092 --topic UpdateUsernameSAPR --create --partitions 1 --replication-factor 1)) &&
+      (sleep 50) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic UpdateUsernameUPAM --partitions 1 --replication-factor 1) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic UpdateUsernameFailed --partitions 3 --replication-factor 1) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic UpdateUsernameSAT --partitions 1 --replication-factor 1) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic DeleteSessions --partitions 1 --replication-factor 1) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic DeleteSessionsFailed --partitions 1 --replication-factor 1) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic CreateUserProfile --partitions 1 --replication-factor 1) &&
+      (kafka-topics --create --if-not-exists --bootstrap-server kafka:19092 --topic CreateUserProfileFailed --partitions 1 --replication-factor 1) &&
       (echo \"Topics created successfully\") &&
       (echo) &&
       (echo \"List Topics for kafka:19092\") &&
@@ -121,11 +121,6 @@ services:
     ports:
       - "8081:8081"
 
-  # # partner-request-service:
-  # #   build: ./Backend/PartnerRequests
-  # #   ports:
-  # #     - "8000:8000"
-
   scheduling-service:
     build: ./Backend/SchedulingAndTracking/Scheduling
     container_name: scheduling-service
@@ -134,9 +129,19 @@ services:
     ports:
       - "8082:8082"
 
-  # frontend:
-  #   build: ./Frontend
-  #   ports:
-  #     - "3000:3000"
+  frontend:
+    build: ./Frontend
+    ports:
+      - "3000:3000"
+
+  api-gateway:
+    build: ./Backend/APIGateway
+    container_name: nginx-api-gateway
+    depends_on:
+      - authorization-service
+      - user-profile-management-service
+      - scheduling-service
+    ports:
+      - "80:80"
 
 
