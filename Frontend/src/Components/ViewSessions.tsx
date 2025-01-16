@@ -54,7 +54,7 @@ function ViewSessions(): JSX.Element {
     function getSessions(): JSX.Element[] {
         // return mapped documents for each session
         const monthMap: { [key: string]: string } = {
-            "January": "1",
+            "January": "01",
             "February": "02",
             "March": "03",
             "April": "04",
