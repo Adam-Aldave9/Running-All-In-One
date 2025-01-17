@@ -96,7 +96,7 @@ function UserProfile(): JSX.Element {
           {/* Title */}
           <h4 className="text-xl md:text-3xl font-bold mb-2 text-gray-950 ">Profile Information</h4>
           <p className="text-gray-700 mb-10">Personal details and runner details</p>
-          <Link to={`/edituserprofile/"+${params.username}+"/"+${params.userid}`} className="mt-4 inline-block w-1/5 cursor-pointer items-center rounded-md bg-black px-6 py-3 text-center font-semibold text-white">Edit Profile</Link>
+          <Link to={`/edituserprofile/${params.username}/${params.userid}`} className="mt-4 inline-block w-1/5 cursor-pointer items-center rounded-md bg-black px-6 py-3 text-center font-semibold text-white">Edit Profile</Link>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-7 border-b border-gray-300" >
             <div className="font-semibold text-gray-950">Username</div>
             <div className="md:col-span-2 text-gray-700">{userInformation.username}</div>
